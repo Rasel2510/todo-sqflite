@@ -3,7 +3,7 @@ import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 
 import 'package:sqflite_common_ffi/sqflite_ffi.dart';
-import 'package:todo/model/model_class.dart';
+import 'package:todo/features/model/add_todo_model.dart';
 
 class DbHelper {
   Database? _database;

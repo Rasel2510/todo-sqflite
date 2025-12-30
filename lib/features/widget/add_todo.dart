@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/model/model_class.dart';
-import 'package:todo/servise/db_helper.dart';
-import 'package:todo/servise/provider.dart';
+import 'package:todo/features/model/add_todo_model.dart';
+import 'package:todo/features/data/db_helper.dart';
+import 'package:todo/features/data/provider.dart';
+import 'package:todo/features/widget/textformfild.dart';
 
 class Todo extends StatefulWidget {
   const Todo({super.key});
@@ -19,47 +20,21 @@ class _TodoState extends State<Todo> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.greenAccent,
       body: Padding(
         padding: const EdgeInsets.all(20.0),
         child: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              TextField(
-                controller: name,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFFF5F5F5),
-                  hintText: 'Title',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blueGrey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.green),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
-              ),
+              CustomTextField(controller: name, hintText: "Titel"),
               const SizedBox(height: 20),
 
-              TextField(
+              CustomTextField(
                 controller: ageint,
+                hintText: 'Description',
                 minLines: 3,
                 maxLines: 5,
-                decoration: InputDecoration(
-                  filled: true,
-                  fillColor: const Color(0xFFF5F5F5),
-                  hintText: 'Description',
-                  enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blueGrey),
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.green),
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                ),
               ),
 
               const SizedBox(height: 20),
@@ -97,8 +72,16 @@ class _TodoState extends State<Todo> {
                           if (name.text.isEmpty || ageint.text.isEmpty) {
                             ScaffoldMessenger.of(context).showSnackBar(
                               const SnackBar(
-                                content: Text('Filed the form',style: TextStyle(fontWeight: FontWeight.bold),),
-                                backgroundColor: Color.fromARGB(129, 255, 82, 82),
+                                content: Text(
+                                  'Filed the form',
+                                  style: TextStyle(fontWeight: FontWeight.bold),
+                                ),
+                                backgroundColor: Color.fromARGB(
+                                  129,
+                                  255,
+                                  82,
+                                  82,
+                                ),
                                 duration: Duration(milliseconds: 1000),
                                 behavior: SnackBarBehavior.floating,
                               ),
@@ -119,12 +102,14 @@ class _TodoState extends State<Todo> {
 
                           ScaffoldMessenger.of(context).showSnackBar(
                             const SnackBar(
-                              content: Text('successfully added TODO', style: TextStyle(fontWeight: FontWeight.bold),),
-                             backgroundColor:Color.fromARGB(168, 18, 214, 25),
+                              content: Text(
+                                'successfully added TODO',
+                                style: TextStyle(fontWeight: FontWeight.bold),
+                              ),
+                              backgroundColor: Color.fromARGB(168, 18, 214, 25),
                               behavior: SnackBarBehavior.floating,
                               duration: Duration(milliseconds: 1000),
                               elevation: 6,
-
                             ),
                           );
 

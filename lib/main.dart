@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/servise/provider.dart';
-import 'package:todo/ui/home_f.dart';
+import 'package:todo/features/data/provider.dart';
+import 'package:todo/features/presentation/home_screen.dart';
 
 void main() {
   runApp(const MyApp());
