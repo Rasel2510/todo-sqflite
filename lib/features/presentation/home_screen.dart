@@ -12,37 +12,49 @@ class HomeF extends StatefulWidget {
 }
 
 class _HomeFState extends State<HomeF> {
+  // List of background colors to cycle through
+  final List<Color> containerColors = [
+    Colors.cyanAccent.shade100,
+    Colors.orangeAccent.shade100,
+    Colors.greenAccent.shade100,
+    Colors.pinkAccent.shade100,
+    Colors.purpleAccent.shade100,
+  ];
+
   @override
   void initState() {
     super.initState();
 
+    // Load todos after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TodoProvider>(context, listen: false).loadTodos();
     });
   }
 
+  // Determine text color based on background brightness
+  Color getTextColor(Color bgColor) {
+    return ThemeData.estimateBrightnessForColor(bgColor) == Brightness.dark
+        ? Colors.white
+        : Colors.black87;
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.greenAccent,
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.greenAccent,
-        title: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            const Text("TODO", style: TextStyle(fontWeight: FontWeight.bold)),
-          ],
+        title: const Center(
+          child: Text("TODO", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ),
       body: Consumer<TodoProvider>(
         builder: (context, todoProvider, child) {
-          // Show loading indicator
+          // Loading state
           if (todoProvider.isLoading) {
             return const Center(child: CircularProgressIndicator());
           }
 
-          // Show empty state
+          // Empty state
           if (todoProvider.todos.isEmpty) {
             return const Center(
               child: Text(
@@ -52,14 +64,18 @@ class _HomeFState extends State<HomeF> {
             );
           }
 
-          // Show todo list
+          // List of todos
           return ListView.builder(
-            physics: BouncingScrollPhysics(
+            physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
             itemCount: todoProvider.todos.length,
             itemBuilder: (context, index) {
               final item = todoProvider.todos[index];
+              final containerColor =
+                  containerColors[index % containerColors.length];
+              final textColor = getTextColor(containerColor);
+
               return Dismissible(
                 key: ValueKey(item.id),
                 direction: DismissDirection.endToStart,
@@ -92,39 +108,49 @@ class _HomeFState extends State<HomeF> {
                       ),
                     );
                   },
-                  child: Container(
+                  child: AnimatedContainer(
+                    duration: const Duration(milliseconds: 500),
+                    curve: Curves.easeInOut,
                     margin: const EdgeInsets.symmetric(
                       horizontal: 16,
                       vertical: 4,
                     ),
                     padding: const EdgeInsets.all(8),
                     decoration: BoxDecoration(
-                      border: Border.all(color: Colors.cyanAccent, width: 2),
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: Alignment.bottomCenter,
-                        colors: [Colors.white, Colors.white],
-                      ),
                       borderRadius: BorderRadius.circular(12),
-                      boxShadow: [
+                      gradient: LinearGradient(
+                        begin: Alignment.topLeft,
+                        end: Alignment.bottomRight,
+                        colors: [
+                          containerColor.withOpacity(0.8),
+                          containerColor,
+                        ],
+                      ),
+                      boxShadow: const [
                         BoxShadow(
-                          color: Colors.white54,
+                          color: Colors.black12,
                           blurRadius: 4,
-                          offset: const Offset(0, 2),
+                          offset: Offset(0, 2),
                         ),
                       ],
                     ),
                     child: ListTile(
                       title: Text(
                         item.name,
-                        style: const TextStyle(fontWeight: FontWeight.bold),
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: textColor,
+                        ),
                       ),
-                      subtitle: Text(item.age),
+                      subtitle: Text(
+                        item.age,
+                        style: TextStyle(color: textColor),
+                      ),
                       trailing: IconButton(
                         onPressed: () async {
                           await todoProvider.deleteTodo(item.id);
                         },
-                        icon: const Icon(Icons.remove, color: Colors.red),
+                        icon: Icon(Icons.remove, color: textColor),
                       ),
                     ),
                   ),
