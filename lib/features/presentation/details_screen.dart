@@ -44,7 +44,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     await provider.updateTodo(widget.item);
 
-    return true;  
+    return true;
   }
 
   Color getTextColor(Color bgColor) {
@@ -96,7 +96,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       TextField(
                         controller: nameController,
                         style: TextStyle(
-                          fontSize: 26,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: textColor,
                         ),
@@ -107,14 +107,15 @@ class _DetailsScreenState extends State<DetailsScreen> {
                       ),
                       const SizedBox(height: 16),
                       TextField(
+                        autofocus: true,
                         controller: descController,
-                        style: TextStyle(fontSize: 20, color: textColor),
+                        style: TextStyle(fontSize: 16, color: textColor),
                         decoration: const InputDecoration(
                           border: InputBorder.none,
                           hintText: "Description",
                         ),
-                        minLines: 3,
-                        maxLines: 6,
+                        // minLines: 3,
+                        maxLines: null,
                       ),
                     ],
                   ),

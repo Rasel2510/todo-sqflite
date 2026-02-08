@@ -49,7 +49,7 @@ class _HomeFState extends State<HomeF> {
       appBar: AppBar(
         elevation: 0,
         title: const Center(
-          child: Text("TODO", style: TextStyle(fontWeight: FontWeight.bold)),
+          child: Text("NOTS", style: TextStyle(fontWeight: FontWeight.bold)),
         ),
       ),
       body: Consumer<TodoProvider>(
@@ -143,6 +143,7 @@ class _HomeFState extends State<HomeF> {
                     child: ListTile(
                       title: Text(
                         item.name,
+                        maxLines: 1,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: textColor,
@@ -150,6 +151,7 @@ class _HomeFState extends State<HomeF> {
                       ),
                       subtitle: Text(
                         item.age,
+                        maxLines: 2,
                         style: TextStyle(color: textColor),
                       ),
                       // trailing: IconButton(
