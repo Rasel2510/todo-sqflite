@@ -36,7 +36,17 @@ class TodoProvider with ChangeNotifier {
     }
   }
 
-  // Delete a todo by id
+  //update todo
+  Future<void> updateTodo(ModelClass todo) async {
+    try {
+      await _dbHelper.updateData(todo);
+      await loadTodos();
+    } catch (e) {
+      debugPrint('Error updating todo: $e');
+    }
+  }
+
+  // Delete by id
   Future<void> deleteTodo(int id) async {
     try {
       await _dbHelper.deleteData(id);

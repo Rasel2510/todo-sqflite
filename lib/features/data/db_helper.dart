@@ -40,6 +40,16 @@ class DbHelper {
     await db!.insert('DatabaseTable', modelClass.toMap());
   }
 
+  Future<int> updateData(ModelClass modelClass) async {
+    final db = await database;
+    return await db!.update(
+      'DatabaseTable',
+      modelClass.toMap(),
+      where: 'id = ?',
+      whereArgs: [modelClass.id],
+    );
+  }
+
   //read data
   Future<List<ModelClass>> readData() async {
     Database? db = await database;

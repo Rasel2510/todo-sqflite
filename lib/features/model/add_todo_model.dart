@@ -1,7 +1,7 @@
 class ModelClass {
-  final int id;
-  final String name;
-  final String age;
+  int id;
+  String name;
+  String age;
 
   ModelClass({required this.id, required this.name, required this.age});
 

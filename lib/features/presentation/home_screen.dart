@@ -106,10 +106,14 @@ class _HomeFState extends State<HomeF> {
                 },
                 child: GestureDetector(
                   onTap: () {
-                    Navigator.push(
+                     Navigator.push(
                       context,
                       MaterialPageRoute(
-                        builder: (context) => DetailsScreen(item: item),
+                        builder: (_) => DetailsScreen(
+                          item: item,
+                          containerColor:
+                              containerColors[index % containerColors.length],
+                        ),
                       ),
                     );
                   },
@@ -148,12 +152,12 @@ class _HomeFState extends State<HomeF> {
                         item.age,
                         style: TextStyle(color: textColor),
                       ),
-                      trailing: IconButton(
-                        onPressed: () async {
-                          await todoProvider.deleteTodo(item.id);
-                        },
-                        icon: Icon(Icons.remove, color: textColor),
-                      ),
+                      // trailing: IconButton(
+                      //   onPressed: () async {
+                      //     await todoProvider.deleteTodo(item.id);
+                      //   },
+                      //   icon: Icon(Icons.remove, color: textColor),
+                      // ),
                     ),
                   ),
                 ),
@@ -166,9 +170,16 @@ class _HomeFState extends State<HomeF> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.cyanAccent,
         onPressed: () {
-          Navigator.push(
-            context,
-            MaterialPageRoute(builder: (_) => const Todo()),
+          showModalBottomSheet(
+            context: context,
+            isScrollControlled: true,
+            backgroundColor: Colors.transparent,
+            builder: (context) {
+              return Material(
+                color: Colors.transparent,
+                child: AddTodoSheetDynamic(),
+              );
+            },
           );
         },
         child: const Icon(Icons.add),

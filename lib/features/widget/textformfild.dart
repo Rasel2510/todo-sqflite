@@ -5,6 +5,8 @@ class CustomTextField extends StatelessWidget {
   final String hintText;
   final int minLines;
   final int maxLines;
+  final Color fillColor;
+  final Color textColor;
 
   const CustomTextField({
     super.key,
@@ -12,6 +14,8 @@ class CustomTextField extends StatelessWidget {
     required this.hintText,
     this.minLines = 1,
     this.maxLines = 1,
+    required this.fillColor ,  
+    this.textColor = Colors.black,
   });
 
   @override
@@ -20,10 +24,12 @@ class CustomTextField extends StatelessWidget {
       controller: controller,
       minLines: minLines,
       maxLines: maxLines,
+      style: TextStyle(color: textColor),
       decoration: InputDecoration(
         filled: true,
-        fillColor: Colors.redAccent.withAlpha(40),
+        fillColor: fillColor,
         hintText: hintText,
+        hintStyle: TextStyle(color: textColor.withAlpha(150)),
         enabledBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.blueGrey),
           borderRadius: BorderRadius.circular(12),
@@ -31,6 +37,10 @@ class CustomTextField extends StatelessWidget {
         focusedBorder: OutlineInputBorder(
           borderSide: const BorderSide(color: Colors.green),
           borderRadius: BorderRadius.circular(16),
+        ),
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 16,
+          vertical: 12,
         ),
       ),
     );
