@@ -1,285 +1,112 @@
-// import 'package:flutter/material.dart';
-// import 'package:provider/provider.dart';
-// import 'package:todo/features/model/add_todo_model.dart';
-// import 'package:todo/features/data/db_helper.dart';
-// import 'package:todo/features/data/provider.dart';
-// import 'package:todo/features/widget/textformfild.dart';
-
-// class Todo extends StatefulWidget {
-//   const Todo({super.key});
-
-//   @override
-//   State<Todo> createState() => _TodoState();
-// }
-
-// class _TodoState extends State<Todo> {
-//   final name = TextEditingController();
-//   final ageint = TextEditingController();
-//   final DbHelper dbHelper = DbHelper();
-
-//   @override
-//   Widget build(BuildContext context) {
-//     return Scaffold(
-//       backgroundColor: Colors.greenAccent,
-//       body: Padding(
-//         padding: const EdgeInsets.all(20.0),
-//         child: Center(
-//           child: Column(
-//             mainAxisAlignment: MainAxisAlignment.center,
-//             children: [
-//               CustomTextField(controller: name, hintText: "Titel"),
-//               const SizedBox(height: 20),
-
-//               CustomTextField(
-//                 controller: ageint,
-//                 hintText: 'Description',
-//                 minLines: 3,
-//                 maxLines: 5,
-//               ),
-
-//               const SizedBox(height: 20),
-
-//               Row(
-//                 children: [
-//                   Expanded(
-//                     child: SizedBox(
-//                       height: 50,
-//                       child: ElevatedButton(
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: Colors.red[200],
-//                         ),
-//                         onPressed: () {
-//                           name.clear();
-//                           ageint.clear();
-//                           Navigator.pop(context);
-//                         },
-//                         child: const Text('Cancel'),
-//                       ),
-//                     ),
-//                   ),
-
-//                   const SizedBox(width: 20),
-
-//                   Expanded(
-//                     child: SizedBox(
-//                       height: 50,
-//                       child: ElevatedButton(
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: Colors.green[200],
-//                         ),
-//                         onPressed: () async {
-//                           //   Validation
-//                           if (name.text.isEmpty || ageint.text.isEmpty) {
-//                             ScaffoldMessenger.of(context).showSnackBar(
-//                               const SnackBar(
-//                                 content: Text(
-//                                   'Filed the form',
-//                                   style: TextStyle(fontWeight: FontWeight.bold),
-//                                 ),
-//                                 backgroundColor: Color.fromARGB(
-//                                   129,
-//                                   255,
-//                                   82,
-//                                   82,
-//                                 ),
-//                                 duration: Duration(milliseconds: 1000),
-//                                 behavior: SnackBarBehavior.floating,
-//                               ),
-//                             );
-//                             return;
-//                           }
-//                           final todoProvider = Provider.of<TodoProvider>(
-//                             context,
-//                             listen: false,
-//                           );
-//                           await todoProvider.addTodo(
-//                             ModelClass(
-//                               id: DateTime.now().millisecondsSinceEpoch,
-//                               name: name.text,
-//                               age: ageint.text,
-//                             ),
-//                           );
-
-//                           ScaffoldMessenger.of(context).showSnackBar(
-//                             const SnackBar(
-//                               content: Text(
-//                                 'successfully added TODO',
-//                                 style: TextStyle(fontWeight: FontWeight.bold),
-//                               ),
-//                               backgroundColor: Color.fromARGB(168, 18, 214, 25),
-//                               behavior: SnackBarBehavior.floating,
-//                               duration: Duration(milliseconds: 1000),
-//                               elevation: 6,
-//                             ),
-//                           );
-
-//                           name.clear();
-//                           ageint.clear();
-
-//                           Navigator.pop(context);
-//                         },
-//                         child: const Text('Submit'),
-//                       ),
-//                     ),
-//                   ),
-//                 ],
-//               ),
-//             ],
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
-import 'package:todo/features/data/provider.dart';
 import 'package:todo/features/model/add_todo_model.dart';
-import 'package:todo/features/widget/textformfild.dart';
+import 'package:todo/features/data/provider.dart';
 
-class AddTodoSheetDynamic extends StatefulWidget {
-  const AddTodoSheetDynamic({super.key});
+class AddTodo extends StatefulWidget {
+  final ModelClass? item;
+  final Color? containerColor;
+  const AddTodo({super.key, this.item, this.containerColor});
 
   @override
-  State<AddTodoSheetDynamic> createState() => _AddTodoSheetDynamicState();
+  State<AddTodo> createState() => _AddTodoState();
 }
 
-class _AddTodoSheetDynamicState extends State<AddTodoSheetDynamic> {
-  final nameController = TextEditingController();
-  final descController = TextEditingController();
+class _AddTodoState extends State<AddTodo> {
+  late TextEditingController todoController;
+  late Color containerColor;
 
-  final List<Color> containerColors = [
-    Colors.cyanAccent,
-    Colors.orangeAccent,
-    Colors.greenAccent,
-    Colors.pinkAccent,
-    Colors.purpleAccent,
-    Colors.amberAccent,
-    Colors.tealAccent,
-    Colors.lightBlueAccent,
-    Colors.limeAccent,
-    Colors.deepOrangeAccent,
-  ];
+  @override
+  void initState() {
+    super.initState();
+    todoController = TextEditingController(
+      text: widget.item != null ? widget.item!.name : '',
+    );
+    containerColor =
+        widget.containerColor ??
+        Colors.primaries[DateTime.now().millisecondsSinceEpoch %
+            Colors.primaries.length];
+  }
 
-  Color getTextColor(Color bgColor) {
-    return ThemeData.estimateBrightnessForColor(bgColor) == Brightness.dark
-        ? Colors.white
-        : Colors.black87;
+  @override
+  void dispose() {
+    todoController.dispose();
+    super.dispose();
+  }
+
+  Future<bool> _onWillPop() async {
+    final provider = Provider.of<TodoProvider>(context, listen: false);
+
+    if (todoController.text.trim().isEmpty) {
+      // Don't save empty todo
+      return true;
+    }
+
+    if (widget.item != null) {
+      // Update existing todo
+      await provider.updateTodo(
+        ModelClass(
+          id: widget.item!.id,
+          name: todoController.text,
+          age: widget.item!.age,
+        ),
+      );
+    } else {
+      // Add new todo
+      await provider.addTodo(
+        ModelClass(
+          id: DateTime.now().millisecondsSinceEpoch,
+          name: todoController.text,
+          age: '',
+        ),
+      );
+    }
+
+    return true; // allow back navigation
   }
 
   @override
   Widget build(BuildContext context) {
-    // pick a dynamic color based on current timestamp
-    final containerColor =
-        containerColors[DateTime.now().millisecondsSinceEpoch %
-            containerColors.length];
-    final textColor = getTextColor(containerColor);
-
-    return Padding(
-      padding: MediaQuery.of(context).viewInsets, // safe area for keyboard
-      child: Container(
-        decoration: BoxDecoration(
-          borderRadius: const BorderRadius.vertical(top: Radius.circular(20)),
-          gradient: LinearGradient(
-            colors: [containerColor.withAlpha(80), containerColor],
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
-          ),
-        ),
-        padding: const EdgeInsets.all(20),
-        child: SingleChildScrollView(
-          physics: const BouncingScrollPhysics(),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                "Add New Todo",
-                style: TextStyle(
-                  fontSize: 26,
-                  fontWeight: FontWeight.bold,
-                  color: textColor,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        _onWillPop();
+      },
+      canPop: true,
+      child: Scaffold(
+        backgroundColor: Colors.white,
+        body: SafeArea(
+          child: GestureDetector(
+            onTap: () => FocusScope.of(context).unfocus(),
+            child: Container(
+              width: double.infinity,
+              height: double.infinity,
+              padding: const EdgeInsets.all(24),
+              decoration: BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [containerColor.withAlpha(50), containerColor],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
               ),
-              const SizedBox(height: 20),
-              CustomTextField(
-                controller: nameController,
-                hintText: "Title",
-                textColor: textColor,
-                fillColor: Colors.white,
-                minLines: 1,
+              child: TextField(
+                controller: todoController,
+                autofocus: true,
+                maxLines: null,
+                style: TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.w500,
+                  color:
+                      ThemeData.estimateBrightnessForColor(containerColor) ==
+                          Brightness.dark
+                      ? Colors.white
+                      : Colors.black87,
+                ),
+                decoration: const InputDecoration(
+                  hintText: 'add note here...',
+                  border: InputBorder.none,
+                ),
               ),
-              const SizedBox(height: 15),
-              CustomTextField(
-                controller: descController,
-                hintText: "Description",
-                textColor: textColor,
-                fillColor: Colors.white,
-                minLines: 3,
-                maxLines: 5,
-              ),
-              const SizedBox(height: 25),
-              Row(
-                children: [
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.redAccent,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () {
-                        Navigator.pop(context); // close sheet
-                      },
-                      child: const Text("Cancel"),
-                    ),
-                  ),
-                  const SizedBox(width: 15),
-                  Expanded(
-                    child: ElevatedButton(
-                      style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.greenAccent.shade400,
-                        padding: const EdgeInsets.symmetric(vertical: 16),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(12),
-                        ),
-                      ),
-                      onPressed: () async {
-                        if (nameController.text.isEmpty ||
-                            descController.text.isEmpty) {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Please fill all fields"),
-                              backgroundColor: Colors.redAccent,
-                              duration: Duration(seconds: 1),
-                              behavior: SnackBarBehavior.floating,
-                            ),
-                          );
-                          return;
-                        }
-
-                        final provider = Provider.of<TodoProvider>(
-                          context,
-                          listen: false,
-                        );
-                        await provider.addTodo(
-                          ModelClass(
-                            id: DateTime.now().millisecondsSinceEpoch,
-                            name: nameController.text,
-                            age: descController.text,
-                          ),
-                        );
-
-                        Navigator.pop(context); // close sheet
-                      },
-                      child: const Text("Submit"),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+            ),
           ),
         ),
       ),

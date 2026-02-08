@@ -106,7 +106,7 @@ class _HomeFState extends State<HomeF> {
                 },
                 child: GestureDetector(
                   onTap: () {
-                     Navigator.push(
+                    Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (_) => DetailsScreen(
@@ -170,16 +170,9 @@ class _HomeFState extends State<HomeF> {
         backgroundColor: Colors.white,
         foregroundColor: Colors.cyanAccent,
         onPressed: () {
-          showModalBottomSheet(
-            context: context,
-            isScrollControlled: true,
-            backgroundColor: Colors.transparent,
-            builder: (context) {
-              return Material(
-                color: Colors.transparent,
-                child: AddTodoSheetDynamic(),
-              );
-            },
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (_) => const AddTodo()),
           );
         },
         child: const Icon(Icons.add),

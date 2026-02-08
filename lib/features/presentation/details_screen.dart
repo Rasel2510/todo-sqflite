@@ -5,7 +5,7 @@ import 'package:todo/features/data/provider.dart';
 
 class DetailsScreen extends StatefulWidget {
   final ModelClass item;
-  final Color containerColor;  
+  final Color containerColor;
 
   const DetailsScreen({
     super.key,
@@ -44,7 +44,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
 
     await provider.updateTodo(widget.item);
 
-    return true; // allow pop
+    return true;  
   }
 
   Color getTextColor(Color bgColor) {
@@ -57,10 +57,13 @@ class _DetailsScreenState extends State<DetailsScreen> {
   Widget build(BuildContext context) {
     final textColor = getTextColor(widget.containerColor);
 
-    return WillPopScope(
-      onWillPop: _onWillPop,
+    return PopScope(
+      onPopInvokedWithResult: (didPop, result) {
+        _onWillPop();
+      },
+      canPop: true,
       child: Scaffold(
-        backgroundColor: Colors.white,  
+        backgroundColor: Colors.white,
         body: GestureDetector(
           onTap: () => FocusScope.of(context).unfocus(),
           child: SafeArea(
