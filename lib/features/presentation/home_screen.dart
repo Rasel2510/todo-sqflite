@@ -47,6 +47,7 @@ class _HomeFState extends State<HomeF> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: Colors.transparent,
         elevation: 0,
         title: const Center(
           child: Text("NOTES", style: TextStyle(fontWeight: FontWeight.bold)),
