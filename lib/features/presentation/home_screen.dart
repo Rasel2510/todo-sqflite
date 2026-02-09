@@ -29,8 +29,6 @@ class _HomeFState extends State<HomeF> {
   @override
   void initState() {
     super.initState();
-
-    // Load todos after first frame
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TodoProvider>(context, listen: false).loadTodos();
     });
