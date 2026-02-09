@@ -5,6 +5,9 @@ import 'package:sqflite_common_ffi/sqflite_ffi.dart';
 import 'package:todo/features/model/add_todo_model.dart';
 
 class DbHelper {
+  DbHelper._internal();
+  static final DbHelper _instance = DbHelper._internal();
+  factory DbHelper() => _instance;
   Database? _database;
 
   Future<Database?> get database async {
@@ -25,7 +28,8 @@ class DbHelper {
     CREATE TABLE DatabaseTable (
       id INTEGER PRIMARY KEY,
       name TEXT,
-      age TEXT
+      age TEXT,
+
     )
   ''');
       },

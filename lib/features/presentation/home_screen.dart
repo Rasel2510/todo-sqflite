@@ -14,10 +14,10 @@ class HomeF extends StatefulWidget {
 class _HomeFState extends State<HomeF> {
   // List of background colors to cycle through
   final List<Color> containerColors = [
+    Colors.pinkAccent.shade100,
     Colors.cyanAccent.shade100,
     Colors.orangeAccent.shade100,
     Colors.greenAccent.shade100,
-    Colors.pinkAccent.shade100,
     Colors.purpleAccent.shade100,
     Colors.amberAccent.shade100,
     Colors.tealAccent.shade100,
@@ -67,15 +67,17 @@ class _HomeFState extends State<HomeF> {
               ),
             );
           }
+          final todos = [...todoProvider.todos];
+          todos.sort((a, b) => b.id.compareTo(a.id));
 
           // List of todos
           return ListView.builder(
             physics: const BouncingScrollPhysics(
               parent: AlwaysScrollableScrollPhysics(),
             ),
-            itemCount: todoProvider.todos.length,
+            itemCount: todos.length,
             itemBuilder: (context, index) {
-              final item = todoProvider.todos[index];
+              final item = todos[index];
               final containerColor =
                   containerColors[index % containerColors.length];
               final textColor = getTextColor(containerColor);
@@ -168,8 +170,9 @@ class _HomeFState extends State<HomeF> {
         },
       ),
       floatingActionButton: FloatingActionButton(
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.cyanAccent,
+        backgroundColor: Colors.orange,
+        foregroundColor: Colors.white,
+
         onPressed: () {
           Navigator.push(
             context,

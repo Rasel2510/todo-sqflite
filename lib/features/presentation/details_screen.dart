@@ -184,7 +184,8 @@ class _DetailsScreenState extends State<DetailsScreen> {
                                 ),
                                 linkStyle: const TextStyle(
                                   color: Colors.blue,
-                                  decoration: TextDecoration.none,
+                                  decoration: TextDecoration.underline,
+                                  decorationColor: Colors.blue,
                                 ),
                               ),
                             ),
