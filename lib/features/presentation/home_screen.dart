@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:todo/features/data/provider.dart';
 import 'package:todo/features/presentation/details_screen.dart';
@@ -24,11 +25,34 @@ class _HomeFState extends State<HomeF> {
     Colors.lightBlueAccent.shade100,
     Colors.limeAccent.shade100,
     Colors.deepOrangeAccent.shade100,
+    Colors.indigoAccent.shade100,
+    Colors.redAccent.shade100,
+    Colors.yellowAccent.shade100,
+    Colors.blueAccent.shade100,
+    Colors.deepPurpleAccent.shade100,
+    Colors.lightGreenAccent.shade100,
   ];
+
+  // Timer? _timer;
+  // int _tick = 0;
+
+  // Color randomColor() {
+  //   final random = Random(_tick);
+  //   int r = 150 + random.nextInt(106);
+  //   int g = 150 + random.nextInt(106);
+  //   int b = 150 + random.nextInt(106);
+  //   return Color.fromARGB(255, r, g, b);
+  // }
 
   @override
   void initState() {
     super.initState();
+    // _timer?.cancel();
+    // _timer = Timer.periodic(const Duration(milliseconds: 500), (timer) {
+    //   setState(() {
+    //     _tick++;
+    //   });
+    // });
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Provider.of<TodoProvider>(context, listen: false).loadTodos();
     });
@@ -39,6 +63,21 @@ class _HomeFState extends State<HomeF> {
     return ThemeData.estimateBrightnessForColor(bgColor) == Brightness.dark
         ? Colors.white
         : Colors.black87;
+  }
+
+  String getDisplayDate(String createdAt) {
+    try {
+      DateTime dt = DateFormat("MMM d, yyyy hh:mm a").parse(createdAt);
+
+      DateTime now = DateTime.now();
+      if (dt.year == now.year && dt.month == now.month && dt.day == now.day) {
+        return DateFormat("hh:mm a").format(dt);
+      } else {
+        return DateFormat("MMM d, yyyy").format(dt);
+      }
+    } catch (e) {
+      return createdAt;
+    }
   }
 
   @override
@@ -80,6 +119,8 @@ class _HomeFState extends State<HomeF> {
               final item = todos[index];
               final containerColor =
                   containerColors[index % containerColors.length];
+              // final containerColor = getRandomPastelColor();
+
               final textColor = getTextColor(containerColor);
 
               return Dismissible(
@@ -119,13 +160,14 @@ class _HomeFState extends State<HomeF> {
                     );
                   },
                   child: AnimatedContainer(
+                    width: double.infinity,
                     duration: const Duration(milliseconds: 500),
                     curve: Curves.easeInOut,
                     margin: const EdgeInsets.symmetric(
-                      horizontal: 16,
+                      horizontal: 12,
                       vertical: 4,
                     ),
-                    padding: const EdgeInsets.all(8),
+                    padding: EdgeInsets.symmetric(horizontal: 18, vertical: 12),
                     decoration: BoxDecoration(
                       borderRadius: BorderRadius.circular(12),
                       gradient: LinearGradient(
@@ -141,26 +183,51 @@ class _HomeFState extends State<HomeF> {
                         ),
                       ],
                     ),
-                    child: ListTile(
-                      title: Text(
-                        item.name,
-                        maxLines: 1,
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          color: textColor,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // ListTile(
+                        //   title: Text(
+                        //     item.name,
+                        //     maxLines: 1,
+                        //     style: TextStyle(
+                        //       fontWeight: FontWeight.bold,
+                        //       color: textColor,
+                        //     ),
+                        //   ),
+                        //   subtitle: Text(
+                        //     item.age,
+                        //     maxLines: 2,
+                        //     style: TextStyle(color: textColor),
+                        //   ),
+
+                        //   // trailing: IconButton(
+                        //   //   onPressed: () async {
+                        //   //     await todoProvider.deleteTodo(item.id);
+                        //   //   },
+                        //   //   icon: Icon(Icons.remove, color: textColor),
+                        //   // ),
+                        // ),
+                        Text(
+                          item.name,
+                          maxLines: 1,
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            color: textColor,
+                          ),
                         ),
-                      ),
-                      subtitle: Text(
-                        item.age,
-                        maxLines: 2,
-                        style: TextStyle(color: textColor),
-                      ),
-                      // trailing: IconButton(
-                      //   onPressed: () async {
-                      //     await todoProvider.deleteTodo(item.id);
-                      //   },
-                      //   icon: Icon(Icons.remove, color: textColor),
-                      // ),
+                        SizedBox(height: 4),
+                        Text(
+                          item.age,
+                          maxLines: 2,
+                          style: TextStyle(color: textColor),
+                        ),
+                        SizedBox(height: 4),
+                        Text(
+                          getDisplayDate(item.createdAt),
+                          style: TextStyle(fontSize: 10),
+                        ),
+                      ],
                     ),
                   ),
                 ),

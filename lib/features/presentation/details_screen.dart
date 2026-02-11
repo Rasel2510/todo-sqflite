@@ -53,10 +53,26 @@ class _DetailsScreenState extends State<DetailsScreen> {
   }
 
   //lunch url
+
   Future<void> _openLink(LinkableElement link) async {
-    final uri = Uri.parse(link.url);
-    if (await canLaunchUrl(uri)) {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    final Uri uri = Uri.parse(link.url);
+
+    try {
+      // Try opening in external app first
+      bool launched = await launchUrl(
+        uri,
+        mode: LaunchMode.externalApplication,
+      );
+
+      if (!launched) {
+        // Fallback to in-app webview
+        await launchUrl(uri, mode: LaunchMode.inAppWebView);
+      }
+    } catch (e) {
+      debugPrint("Error launching URL: $e");
+
+      // Final fallback
+      await launchUrl(uri, mode: LaunchMode.inAppWebView);
     }
   }
 
@@ -135,6 +151,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
         ),
         backgroundColor: Colors.white,
         body: GestureDetector(
+          behavior: HitTestBehavior.opaque,
           onTap: () => FocusScope.of(context).unfocus(),
           child: SafeArea(
             child: Padding(
@@ -163,6 +180,10 @@ class _DetailsScreenState extends State<DetailsScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
+                      Text(
+                        "${widget.item.createdAt} | ${widget.item.age.length} characters",
+                        style: TextStyle(fontSize: 12, color: textColor),
+                      ),
                       TextField(
                         controller: nameController,
                         style: TextStyle(
@@ -194,6 +215,7 @@ class _DetailsScreenState extends State<DetailsScreen> {
                               },
                             )
                           : GestureDetector(
+                              behavior: HitTestBehavior.translucent,
                               onTap: () {
                                 setState(() {
                                   isEditing = true;
